@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <title>Расчёт подсчёт обсчёт</title>
+
+   <link href="css/bootstrap.min.css" rel="stylesheet" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+   <link href="css/style.css" rel="stylesheet">
+
+
+   <script src="js/bootstrap.bundle.min.js"></script>
+   <script src="js/starwars.js"></script>
+
+</head>
+
+<body>
+   <!-- Tabs navs -->
+   <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+            Задача 1
+         </button>
+      </li>
+      <li class="nav-item" role="presentation">
+         <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button"
+            role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+            Задача 2
+         </button>
+      </li>
+   </ul>
+   <div class="tab-content" id="myTabContent" style="height: 100%;">
+      <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0"
+         style="height: 100%;">
+         <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+               <form class="col">
+                  <img src="img/4.bmp" class="img-fluid formula">
+               </form>
+               <form class="col">
+                  <div class="sequence">
+                     <label for="sequenceInputLabel">Последовательность телеграмм(k1 k2 k3 k4 ...):</label>
+                     <input type="text" class="form-control" id="sequenceInput" placeholder="1423">
+                  </div>
+                  <div class="teleCount">
+                     <label for="channelCountInputLabel">Количество телеграмм(m):</label>
+                     <input type="text" class="form-control" id="teleCountInput" placeholder="6">
+                  </div>
+                  <div class="channelCount">
+                     <label for="channelCountInputLabel">Количество каналов связи(n):</label>
+                     <input type="text" class="form-control" id="channelCountInput" placeholder="4">
+                  </div>
+               </form>
+
+               <div class="answer" style="display: none;"></div>
+
+               <button onclick="changeVisibility()" id="answer" class="btn btn-info answer"
+                  style="display: none;"></button>
+
+               <div class="row justify-content-center align-items-center" id="resultBtn">
+                  <button onclick="calculate_4()" type="button" class="btn btn-danger">Обсчёт подсчёт расчёт
+                     пересчёт</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0"
+         style="height: 100%;">
+         <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+               <form class="col">
+                  <img src="img/5.bmp" class="img-fluid formula" style="width: 500px;">
+               </form>
+               <form class="col">
+                  <div class="elementsCount">
+                     <label for="elementsCountLabel">Количество элементов(k):</label>
+                     <input type="text" class="form-control" id="elementsCount" placeholder="500">
+                  </div>
+                  <div class="choseElementsCount">
+                     <label for="choseElementsCountLabel">Количество выбираемых элементов(n):</label>
+                     <input type="text" class="form-control" id="choseElementsCount" placeholder="300">
+                  </div>
+                  <div class="elementsInTypeCount">
+                     <label for="elementsInTypeCountLabel">Количество элементов i-того типа(k1 k2 ... ki ...):</label>
+                     <input type="text" class="form-control" id="elementsInTypeCount" placeholder="4 5 3 7 5 ...">
+                  </div>
+                  <div class="amongElementsCount">
+                     <label for="amongElementsCountLabel">Среди которых будет i-того типа(n1 n2 ... ni ...):</label>
+                     <input type="text" class="form-control" id="amongElementsCount" placeholder="1 4 2 5 4 ...">
+                  </div>
+               </form>
+
+               <div class="answer" style="display: none;"></div>
+
+               <button onclick="changeVisibility2()" id="answer2" class="btn btn-info answer"
+                  style="display: none;"></button>
+
+               <div class="row justify-content-center align-items-center" id="resultBtn2">
+                  <button onclick="calculate_5()" type="button" class="btn btn-danger">Обсчёт подсчёт расчёт
+                     пересчёт</button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+</body>
