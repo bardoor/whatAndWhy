@@ -75,7 +75,7 @@ function createStatArray(inputArray) {
    return statArray;
 }
 
-function statTableCreate(statSeries, tableBody, divider) {
+function statTableCreate(statSeries, tableBody) {
    if (tableBody) tableBody.innerHTML = ''; // Очистка содержимого таблицы
    const row1 = createRow([]);
    for (var i = 0; i < statSeries.length; i++) {
@@ -88,12 +88,78 @@ function statTableCreate(statSeries, tableBody, divider) {
    // Создание второй строки таблицы
    const row2 = createRow([]);
    for (var i = 0; i < statSeries.length; i++) {
-      row2.appendChild(createCell(statSeries[i][1]/divider));
+      row2.appendChild(createCell(statSeries[i][1]));
    }
 
    // Добавление второй строки в таблицу
    tableBody.appendChild(row2);
 }
+
+function sumProbs(statSeries, n) {
+   let sum = 0;
+   for (let i = 0; i < n; i++) {
+      sum += Number(statSeries[i][1]);
+   }
+   return sum;
+}
+
+function distribution(container, statSeriesRel) {
+   container.innerHTML = '';
+   let func = [];
+   $(container).append(`<div>F(x <= ${statSeriesRel[0][0]}) = 0</div>`);
+   func.push([-Number.MAX_VALUE, Number(statSeriesRel[0][0]), 0]);
+   for (let i = 1; i < statSeriesRel.length; i++) {
+      $(container).append(`<div>F(x < ${statSeriesRel[i - 1][0]} <= ${statSeriesRel[i][0]}) = ${sumProbs(statSeriesRel, i).toFixed(4)}</div>`);
+      func.push([Number(statSeriesRel[i - 1][0]), Number(statSeriesRel[i][0]),Number(sumProbs(statSeriesRel, i).toFixed(4))])
+   }
+   $(container).append(`<div>F(x > ${statSeriesRel[statSeriesRel.length - 1][0]}) = 1</div>`);
+   func.push([Number(statSeriesRel[statSeriesRel.length - 1][0]), Number.MAX_SAFE_INTEGER, 1]);
+   console.log(func);
+   return func;
+}
+
+function renderChart(func) {
+   var svg = d3.select('#distribution-chart')
+     .append('svg')
+     .attr('width', 500)
+     .attr('height', 300);
+ 
+   var xMin = func[1][0]; // Начало второго интервала
+   var xMax = func[func.length - 2][1]; // Конец предпоследнего интервала
+ 
+   var xScale = d3.scaleLinear()
+     .domain([xMin-5, xMax+5])
+     .range([50, 450]);
+ 
+   var yScale = d3.scaleLinear()
+     .domain([0, 1])
+     .range([250, 50]);
+ 
+   svg.selectAll('line')
+     .data(func)
+     .enter()
+     .append('line')
+     .attr('x1', function (d) { return xScale(d[0]); })
+     .attr('x2', function (d) { return xScale(d[1]); })
+     .attr('y1', function (d) { return yScale(d[2]); })
+     .attr('y2', function (d) { return yScale(d[2]); })
+     .attr('stroke', 'blue')
+     .attr('stroke-width', 2);
+ 
+   svg.append('g')
+     .attr('transform', 'translate(50, 0)')
+     .call(d3.axisLeft(yScale));
+ 
+   svg.append('g')
+     .attr('transform', 'translate(0, 250)')
+     .call(d3.axisBottom(xScale));
+ }
+ 
+
+
+
+
+
 
 function calculate_4() {
    // Пример использования
@@ -102,24 +168,29 @@ function calculate_4() {
    inputSelection = inputSelection
       .split(' ')
       .sort((a, b) => a - b);
+   const seriesSize = inputSelection.length;
    $('#variation-series')
       .empty()
       .append(inputSelection.join(', '));
-   
+
    const statSeries = createStatArray(inputSelection);
+   let statSeriesRel = Array.from(statSeries, subArray => subArray.slice());
+   for (let i = 0; i < statSeries.length; i++) {
+      statSeriesRel[i][1] /= seriesSize;
+      statSeriesRel[i][1] = Number(statSeriesRel[i][1].toFixed(4));
+   }
 
-   statTableCreate(statSeries, document.getElementById('stat-series'), 1);
-
-   statTableCreate(statSeries, document.getElementById('stat-series-relative'), inputSelection.length);
 
 
+   statTableCreate(statSeries, document.getElementById('stat-series'));
 
+   statTableCreate(statSeriesRel, document.getElementById('stat-series-relative'));
+
+   const distributionFunc = distribution(document.getElementById('distribution'), statSeriesRel);
+
+   renderChart(distributionFunc);
 
 }
-
-
-
-
 
 
 
