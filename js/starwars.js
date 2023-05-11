@@ -110,7 +110,7 @@ function distribution(container, statSeriesRel) {
    func.push([-Number.MAX_VALUE, Number(statSeriesRel[0][0]), 0]);
    for (let i = 1; i < statSeriesRel.length; i++) {
       $(container).append(`<div>F(x < ${statSeriesRel[i - 1][0]} <= ${statSeriesRel[i][0]}) = ${sumProbs(statSeriesRel, i).toFixed(4)}</div>`);
-      func.push([Number(statSeriesRel[i - 1][0]), Number(statSeriesRel[i][0]),Number(sumProbs(statSeriesRel, i).toFixed(4))])
+      func.push([Number(statSeriesRel[i - 1][0]), Number(statSeriesRel[i][0]), Number(sumProbs(statSeriesRel, i).toFixed(4))])
    }
    $(container).append(`<div>F(x > ${statSeriesRel[statSeriesRel.length - 1][0]}) = 1</div>`);
    func.push([Number(statSeriesRel[statSeriesRel.length - 1][0]), Number.MAX_SAFE_INTEGER, 1]);
@@ -120,41 +120,41 @@ function distribution(container, statSeriesRel) {
 
 function renderChart(func) {
    var svg = d3.select('#distribution-chart')
-     .append('svg')
-     .attr('width', 500)
-     .attr('height', 300);
- 
+      .append('svg')
+      .attr('width', 500)
+      .attr('height', 300);
+
    var xMin = func[1][0]; // Начало второго интервала
    var xMax = func[func.length - 2][1]; // Конец предпоследнего интервала
- 
+
    var xScale = d3.scaleLinear()
-     .domain([xMin-5, xMax+5])
-     .range([50, 450]);
- 
+      .domain([xMin - 5, xMax + 5])
+      .range([50, 450]);
+
    var yScale = d3.scaleLinear()
-     .domain([0, 1])
-     .range([250, 50]);
- 
+      .domain([0, 1])
+      .range([250, 50]);
+
    svg.selectAll('line')
-     .data(func)
-     .enter()
-     .append('line')
-     .attr('x1', function (d) { return xScale(d[0]); })
-     .attr('x2', function (d) { return xScale(d[1]); })
-     .attr('y1', function (d) { return yScale(d[2]); })
-     .attr('y2', function (d) { return yScale(d[2]); })
-     .attr('stroke', 'blue')
-     .attr('stroke-width', 2);
- 
+      .data(func)
+      .enter()
+      .append('line')
+      .attr('x1', function (d) { return xScale(d[0]); })
+      .attr('x2', function (d) { return xScale(d[1]); })
+      .attr('y1', function (d) { return yScale(d[2]); })
+      .attr('y2', function (d) { return yScale(d[2]); })
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2);
+
    svg.append('g')
-     .attr('transform', 'translate(50, 0)')
-     .call(d3.axisLeft(yScale));
- 
+      .attr('transform', 'translate(50, 0)')
+      .call(d3.axisLeft(yScale));
+
    svg.append('g')
-     .attr('transform', 'translate(0, 250)')
-     .call(d3.axisBottom(xScale));
- }
- 
+      .attr('transform', 'translate(0, 250)')
+      .call(d3.axisBottom(xScale));
+}
+
 
 
 
@@ -189,6 +189,32 @@ function calculate_4() {
    const distributionFunc = distribution(document.getElementById('distribution'), statSeriesRel);
 
    renderChart(distributionFunc);
+
+   let x = 0;
+   for (let i = 0; i < inputSelection.length; i++) {
+      x += Number(inputSelection[i]);
+      console.log(x);
+   }
+   x /= seriesSize;
+   document.getElementById('x-chosen').innerHTML = x;
+
+   let D = 0;
+   for (let i = 0; i < inputSelection.length; i++) {
+      D += Math.pow(inputSelection[i] - x, 2);
+   }
+   D /= seriesSize;
+
+   document.getElementById('D').innerHTML = D;
+
+   document.getElementById('sigma').innerHTML = Math.sqrt(D);
+
+   let S = 0;
+   for (let i = 0; i < inputSelection.length; i++) {
+      S += Math.pow(inputSelection[i] - x, 2);
+   }
+   S /= (seriesSize - 1)
+
+   document.getElementById('S').innerHTML = Math.sqrt(S);
 
 }
 
