@@ -41,40 +41,80 @@
                <form class="col">
                   <div class="selection">
                      <label for="selectionInputLabel">Выборка(значения разделяются пробелами):</label>
-                     <input type="text" class="form-control" id="selectionInput" placeholder="1423">
+                     <input type="text" class="form-control" id="selectionInput" placeholder="">
                   </div>
                   <form method="post" action="/upload" enctype="multipart/form-data">
                      <label for="fileInput" style="display: block;">Или выберите .txt файл:</label>
                      <input type="file" class="form-control-file" id="selectionInputFile" name="file"
                         accept="text/plain">
                   </form>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="varCheck">
+                     <label class="form-check-label" for="flexCheckDefault">
+                        Вариационный ряд
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="statCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Статистический ряд частот
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="statRelCheck">
+                     <label class="form-check-label" for="flexCheckDefault">
+                        Статистический ряд относительных частот
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="empCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Эмпирический ряд распределения
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="numericsCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Числовые характеристики
+                     </label>
+                  </div>
                </form>
-               <div>Вариационный ряд:</div>
-               <div id="variation-series"></div>
-               <div>Статистический ряд частот:</div>
-               <table>
-                  <tbody id="stat-series" class="table-responsive"></tbody>
-               </table>
-               <div>Статистический ряд относительных частот:</div>
-               <table>
-                  <tbody id="stat-series-relative" class="table-responsive"></tbody>
-               </table>
-               <div>Эмпирический ряд распределения:</div>
-               <div id="distribution"></div>
-               <div style="width:100%; height: 400px;" id="distribution-chart"></div>
+               <div id="var-ser">
+                  <div>Вариационный ряд:</div>
+                  <div id="variation-series"></div>
+               </div>
+               <div id="stat-ser">
+                  <div>Статистический ряд частот:</div>
+                  <table>
+                     <tbody id="stat-series" class="table-responsive"></tbody>
+                  </table>
+               </div>
+               <div id="stat-ser-rel">
+                  <div>Статистический ряд относительных частот:</div>
+                  <table>
+                     <tbody id="stat-series-relative" class="table-responsive"></tbody>
+                  </table>
+               </div>
+               <div id="emp-ser">
+                  <div>Эмпирический ряд распределения:</div>
+                  <div id="distribution"></div>
+                  <div style="width:100%; height: 400px;" id="distribution-chart"></div>
+               </div>
 
-               <div>X выборочное:</div>
-               <div id="x-chosen"></div>
+               <div id="numerics">
+                  <div>X выборочное:</div>
+                  <div id="x-chosen"></div>
+                  <img src="img/4.bmp" style="width: 200px;">
 
-               <div>Дисперсия выборочная:</div>
-               <div id="D"></div>
+                  <div>Дисперсия выборочная:</div>
+                  <div id="D"></div>
 
-               <div>Среднее квардатическое отклонение:</div>
-               <div id="sigma"></div>
+                  <div>Среднее квардатическое отклонение:</div>
+                  <div id="sigma"></div>
 
-               <div>Среднее стандартное отклонение:</div>
-               <div id="S"></div>
-
+                  <div>Среднее стандартное отклонение:</div>
+                  <div id="S"></div>
+               </div>
 
                <div class="answer" style="display: none;"></div>
 

@@ -156,8 +156,28 @@ function renderChart(func) {
 }
 
 
+function checkHandle(container, checkbox) {
+   checkbox.addEventListener('change', function () {
+      if (checkbox.checked) {
+         container.style.display = 'block'; // показать div
+      } else {
+         container.style.display = 'none'; // скрыть div
+      }
+   });
+}
 
+const varCheck = document.getElementById('varCheck');
+const statCheck = document.getElementById('statCheck');
+const statRelCheck = document.getElementById('statRelCheck');
+const empCheck = document.getElementById('empCheck');
+const numericCheck = document.getElementById('numericsCheck');
 
+const checksContainers = [document.getElementById('var-ser'), document.getElementById('stat-ser'), document.getElementById('stat-ser-rel'), document.getElementById('emp-ser'), document.getElementById('numerics')];
+const cheks = [varCheck, statCheck, statRelCheck, empCheck, numericCheck];
+
+for (let i = 0; i < cheks.length; i++) {
+   checkHandle(checksContainers[i], cheks[i]);
+}
 
 
 
@@ -215,6 +235,8 @@ function calculate_4() {
    S /= (seriesSize - 1)
 
    document.getElementById('S').innerHTML = Math.sqrt(S);
+
+
 
 }
 
