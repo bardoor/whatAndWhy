@@ -7,6 +7,10 @@ body {
    padding: 0;
 }
 
+.katex_formula{
+   font-size: 25px;
+}
+
 .formula {
    min-width: 300px;
 }

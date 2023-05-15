@@ -1,3 +1,5 @@
+
+
 function changeVisibility() {
    document.getElementById('resultBtn').style.display = "block";
    document.getElementById('answer').style.display = "none";
@@ -256,25 +258,29 @@ function calculate_4() {
       x += Number(inputSelection[i]);
    }
    x /= seriesSize;
-   document.getElementById('x-chosen').innerHTML = x;
+   x = x.toFixed(4);
+   katex.render(`\\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{1}${statSeries.length} \\sum_{i=1}^${statSeries.length} x_i = ${x}`, document.getElementById('x-selected'));
+   
 
    let D = 0;
    for (let i = 0; i < inputSelection.length; i++) {
       D += Math.pow(inputSelection[i] - x, 2);
    }
    D /= seriesSize;
+   D = D.toFixed(4);
+   katex.render(`\\sum_{i=1}^{n} n_i (x_i - \\overline{x_в})^2 = \\sum_{i=1}^${statSeries.length} n_i (x_i - ${x})^2 = ${D}`, document.getElementById('D'));
 
-   document.getElementById('D').innerHTML = D;
-
-   document.getElementById('sigma').innerHTML = Math.sqrt(D);
+   let sigma = Math.sqrt(D).toFixed(4);
+   katex.render(`\\sqrt{D_в} = \\sqrt{${D}} = ${sigma}`, document.getElementById('sigma'));
 
    let S = 0;
    for (let i = 0; i < inputSelection.length; i++) {
       S += Math.pow(inputSelection[i] - x, 2);
    }
    S /= (seriesSize - 1)
-
-   document.getElementById('S').innerHTML = Math.sqrt(S);
+   S = Math.sqrt(S);
+   S = S.toFixed(4);
+   katex.render(`\\sqrt{\\frac{\\sum_{i=1}^{n}(x_i - x_в)^2}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^${statSeries.length}(x_i - ${x})^2}{${statSeries.length - 1}}} = ${S}`, document.getElementById('S'));
 
 
 
