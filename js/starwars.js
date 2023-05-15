@@ -1,29 +1,3 @@
-function factorial(n) {
-   var result = 1n;
-   for (let i = 1n; i <= BigInt(n); i++) {
-      result = result * i;
-   }
-   return result;
-}
-
-function teleProbability(n, m, k) {
-
-   let sequenceK = factorial(parseInt(k[0], 10));
-   for (let i = 1; i < k.length; i++) {
-      sequenceK *= factorial(parseInt(k[i], 10));
-   }
-
-   let x = Number(factorial(m));
-   let y = Number(sequenceK);
-   let z = Number((n ** m));
-
-   let answer = x / y / z;
-
-   return answer;
-}
-
-
-
 function changeVisibility() {
    document.getElementById('resultBtn').style.display = "block";
    document.getElementById('answer').style.display = "none";
@@ -107,54 +81,104 @@ function distribution(container, statSeriesRel) {
    container.innerHTML = '';
    let func = [];
    $(container).append(`<div>F(x <= ${statSeriesRel[0][0]}) = 0</div>`);
-   func.push([-Number.MAX_VALUE, Number(statSeriesRel[0][0]), 0]);
    for (let i = 1; i < statSeriesRel.length; i++) {
       $(container).append(`<div>F(x < ${statSeriesRel[i - 1][0]} <= ${statSeriesRel[i][0]}) = ${sumProbs(statSeriesRel, i).toFixed(4)}</div>`);
       func.push([Number(statSeriesRel[i - 1][0]), Number(statSeriesRel[i][0]), Number(sumProbs(statSeriesRel, i).toFixed(4))])
    }
    $(container).append(`<div>F(x > ${statSeriesRel[statSeriesRel.length - 1][0]}) = 1</div>`);
-   func.push([Number(statSeriesRel[statSeriesRel.length - 1][0]), Number.MAX_SAFE_INTEGER, 1]);
-   console.log(func);
+
    return func;
 }
 
-function renderChart(func) {
-   var svg = d3.select('#distribution-chart')
-      .append('svg')
-      .attr('width', 500)
-      .attr('height', 300);
+function renderChart(intervals, values) {
+   const canvas = document.getElementById('graphCanvas');
+   const context = canvas.getContext('2d');
+   const height = canvas.height - 90; // Высота с учетом отступов
+   const width = canvas.width - 60; // Ширина с учетом отступов
+   const intervalWidth = width / intervals.length;
+   const maxValue = Math.max(...values);
+   const offset = 60;
 
-   var xMin = func[1][0]; // Начало второго интервала
-   var xMax = func[func.length - 2][1]; // Конец предпоследнего интервала
+   context.clearRect(0, 0, canvas.width, canvas.height);
+   context.textAlign = 'center';
 
-   var xScale = d3.scaleLinear()
-      .domain([xMin - 5, xMax + 5])
-      .range([50, 450]);
+   context.lineWidth = 1;
+   // Рисуем ось X
+   context.beginPath();
+   context.moveTo(offset, height + offset);
+   context.lineTo(width + offset, height + offset);
+   context.stroke();
 
-   var yScale = d3.scaleLinear()
-      .domain([0, 1])
-      .range([250, 50]);
+   // Рисуем стрелку на конце оси X
+   context.beginPath();
+   context.moveTo(width + offset - 10, height + offset - 6);
+   context.lineTo(width + offset, height + offset);
+   context.lineTo(width + offset - 10, height + offset + 6);
+   context.closePath();
+   context.fill();
 
-   svg.selectAll('line')
-      .data(func)
-      .enter()
-      .append('line')
-      .attr('x1', function (d) { return xScale(d[0]); })
-      .attr('x2', function (d) { return xScale(d[1]); })
-      .attr('y1', function (d) { return yScale(d[2]); })
-      .attr('y2', function (d) { return yScale(d[2]); })
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2);
+   // Рисуем ось Y
+   context.beginPath();
+   context.moveTo(offset, offset);
+   context.lineTo(offset, height + offset);
+   context.stroke();
 
-   svg.append('g')
-      .attr('transform', 'translate(50, 0)')
-      .call(d3.axisLeft(yScale));
+   // Рисуем стрелку на конце оси Y
+   context.beginPath();
+   context.moveTo(offset - 6, offset);
+   context.lineTo(offset + 6, offset);
+   context.lineTo(offset, offset - 10);
+   context.closePath();
+   context.fill();
 
-   svg.append('g')
-      .attr('transform', 'translate(0, 250)')
-      .call(d3.axisBottom(xScale));
+
+   // Рисуем горизонтальные линии и точки на стыках интервалов
+   for (let i = 0; i < intervals.length; i++) {
+      const x = i * intervalWidth + offset;
+      const y = height - (values[i] / maxValue * height) + offset;
+      context.font = '12px Arial';
+      context.lineWidth = 2;
+      // Рисуем горизонтальную линию
+      context.beginPath();
+      context.moveTo(x, y);
+      context.lineTo(x + intervalWidth, y);
+      context.stroke();
+      context.lineWidth = 1;
+
+      // Рисуем точку на стыке интервалов, кроме последнего
+      if (i < intervals.length - 1) {
+         context.beginPath();
+         context.arc(x + intervalWidth, y, 4, 0, 2 * Math.PI);
+         context.fill();
+         context.beginPath();
+         context.fillStyle = 'white'
+         context.arc(x + intervalWidth, y, 2, 0, 2 * Math.PI);
+         context.fill();
+      }
+      context.fillStyle = 'black';
+
+      if (i > 0 && i < intervals.length - 1) {
+         // Отмечаем значения на оси y черточками
+         context.beginPath();
+         context.moveTo(offset + 10, y);
+         context.lineTo(offset - 10, y);
+         context.stroke();
+      }
+      if (i > 0) {
+         // Отмечаем значения на оси x черточками
+         context.beginPath();
+         context.moveTo(x, height + offset - 10);
+         context.lineTo(x, height + offset + 10);
+         context.stroke();
+         
+         // Подписываем интервалы
+         context.fillText(intervals[i][0], x, height + 25 + offset);
+      }
+      // Подписываем значения
+      context.fillText(values[i], 20, y);
+   }
+
 }
-
 
 function checkHandle(container, checkbox) {
    checkbox.addEventListener('change', function () {
@@ -200,20 +224,36 @@ function calculate_4() {
       statSeriesRel[i][1] = Number(statSeriesRel[i][1].toFixed(4));
    }
 
-
-
    statTableCreate(statSeries, document.getElementById('stat-series'));
 
    statTableCreate(statSeriesRel, document.getElementById('stat-series-relative'));
 
+   // функция распределения
    const distributionFunc = distribution(document.getElementById('distribution'), statSeriesRel);
 
-   renderChart(distributionFunc);
+   // Интервалы
+   let distIntervals = [[-Number.MAX_SAFE_INTEGER, distributionFunc[0][0]]];
+   for (let i = 0; i < distributionFunc.length; i++) {
+      distIntervals.push([distributionFunc[i][0], distributionFunc[i][1]]);
+   }
+   distIntervals.push([distributionFunc[distributionFunc.length - 1][1], Number.MAX_SAFE_INTEGER]);
 
+   // Значения на интервалах
+   let distValues = [0];
+   for (let i = 0; i < distributionFunc.length; i++) {
+      distValues.push(distributionFunc[i][2]);
+   }
+   distValues.push(1);
+   console.log("intervals: " + distIntervals);
+   console.log("Vals: " + distValues);
+
+   // График
+   renderChart(distIntervals, distValues);
+
+   // Числовые хар-ки
    let x = 0;
    for (let i = 0; i < inputSelection.length; i++) {
       x += Number(inputSelection[i]);
-      console.log(x);
    }
    x /= seriesSize;
    document.getElementById('x-chosen').innerHTML = x;
@@ -239,6 +279,7 @@ function calculate_4() {
 
 
 }
+
 
 
 
