@@ -259,7 +259,7 @@ function calculate_4() {
    }
    x /= seriesSize;
    x = x.toFixed(4);
-   katex.render(`\\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{1}${statSeries.length} \\sum_{i=1}^${statSeries.length} x_i = ${x}`, document.getElementById('x-selected'));
+   katex.render(`\\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{1}{${statSeries.length}} \\sum_{i=1}^{${statSeries.length}} x_i = ${x}`, document.getElementById('x-selected'));
    
 
    let D = 0;
@@ -268,7 +268,7 @@ function calculate_4() {
    }
    D /= seriesSize;
    D = D.toFixed(4);
-   katex.render(`\\sum_{i=1}^{n} n_i (x_i - \\overline{x_в})^2 = \\sum_{i=1}^${statSeries.length} n_i (x_i - ${x})^2 = ${D}`, document.getElementById('D'));
+   katex.render(`\\sum_{i=1}^{n} n_i (x_i - \\overline{x_в})^2 = \\sum_{i=1}^{${statSeries.length}} n_i (x_i - ${x})^2 = ${D}`, document.getElementById('D'));
 
    let sigma = Math.sqrt(D).toFixed(4);
    katex.render(`\\sqrt{D_в} = \\sqrt{${D}} = ${sigma}`, document.getElementById('sigma'));
@@ -280,7 +280,7 @@ function calculate_4() {
    S /= (seriesSize - 1)
    S = Math.sqrt(S);
    S = S.toFixed(4);
-   katex.render(`\\sqrt{\\frac{\\sum_{i=1}^{n}(x_i - x_в)^2}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^${statSeries.length}(x_i - ${x})^2}{${statSeries.length - 1}}} = ${S}`, document.getElementById('S'));
+   katex.render(`\\sqrt{\\frac{\\sum_{i=1}^{n}(x_i - x_в)^2}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^{${statSeries.length}}(x_i - ${x})^2}{${statSeries.length - 1}}} = ${S}`, document.getElementById('S'));
 
 
 
