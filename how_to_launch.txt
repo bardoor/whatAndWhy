@@ -1,3 +1,4 @@
+0) скачиваешь python 3.7.0
 1) pip install -r requirements.txt
 2) в отдельном окне cmd: python main.py
     во втором отдельном окне cmd: python cef_boot.py
