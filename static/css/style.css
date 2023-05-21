@@ -1,0 +1,48 @@
+html {
+   height: 100%;
+}
+
+body {
+   height: 100vh;
+   padding: 0;
+}
+
+.katex_formula{
+   font-size: 25px;
+}
+
+.formula {
+   min-width: 300px;
+}
+
+.vertical {
+   display: grid;
+   place-items: center;
+}
+
+.btn-info:hover {
+   background-color: rgba(255, 0, 0, 0);
+   border-color: rgba(255, 0, 0, 0);
+}
+
+.table-responsive {
+   overflow-x: auto;
+   border-collapse: collapse;
+   min-width: 200px;
+}
+
+.table-responsive td {
+   border: 1px solid black;
+   padding: 8px;
+}
+
+.answer {
+   font-size: x-large;
+   word-wrap: break-word;
+   background-color: rgba(255, 0, 0, 0);
+   border-bottom-color: rgba(255, 0, 0, 0);
+   border-left-color: rgba(255, 0, 0, 0);
+   border-right-color: rgba(255, 0, 0, 0);
+   border-top-color: rgba(255, 0, 0, 0);
+   border-bottom-color: rgba(255, 0, 0, 0);
+}

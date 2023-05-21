@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <title>Расчёт подсчёт обсчёт</title>
+
+   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css"
+      integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+
+   <!-- The loading of KaTeX is deferred to speed up page rendering -->
+   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"
+      integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t"
+      crossorigin="anonymous"></script>
+
+   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+   <!-- Tabs navs -->
+   <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+            Задача 1
+         </button>
+      </li>
+      <li class="nav-item" role="presentation">
+         <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button"
+            role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+            Задача 2
+         </button>
+      </li>
+   </ul>
+   <div class="tab-content" id="myTabContent" style="height: 100%;">
+      <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0"
+         style="height: 100%;">
+         <div class="container">
+            <div class="row justify-content-center">
+               <form class="col">
+                  <div class="selection">
+                     <label for="selectionInputLabel">Выборка (значения разделяются пробелами):</label>
+                     <input type="text" class="form-control" id="selectionInput" placeholder="">
+                  </div>
+                  <form method="post" action="/upload" enctype="multipart/form-data">
+                     <label for="fileInput" style="display: block;">Или выберите .txt файл:</label>
+                     <input type="file" class="form-control-file" id="selectionInputFile" name="file"
+                        accept="text/plain">
+                  </form>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="varCheck">
+                     <label class="form-check-label" for="flexCheckDefault">
+                        Вариационный ряд
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="statCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Статистический ряд частот
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="statRelCheck">
+                     <label class="form-check-label" for="flexCheckDefault">
+                        Статистический ряд относительных частот
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="empCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Эмпирический ряд распределения
+                     </label>
+                  </div>
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="numericsCheck">
+                     <label class="form-check-label" for="flexCheckChecked">
+                        Числовые характеристики
+                     </label>
+                  </div>
+               </form>
+               <div id="var-ser">
+                  <div>Вариационный ряд:</div>
+                  <div id="variation-series"></div>
+               </div>
+               <div id="stat-ser">
+                  <div>Статистический ряд частот:</div>
+                  <table>
+                     <tbody id="stat-series" class="table-responsive"></tbody>
+                  </table>
+               </div>
+               <div id="stat-ser-rel">
+                  <div>Статистический ряд относительных частот:</div>
+                  <table>
+                     <tbody id="stat-series-relative" class="table-responsive"></tbody>
+                  </table>
+               </div>
+               <div id="emp-ser">
+                  <div>Эмпирический ряд распределения:</div>
+                  <div id="distribution"></div>
+                  <canvas id="graphCanvas" width="900" height="400"></canvas>
+               </div>
+
+               <div id="numerics">
+                  <div>X выборочное:</div>
+                  <div id="x-selected" class="katex_formula"></div>
+
+                  <div>Дисперсия выборочная:</div>
+                  <div id="D" class="katex_formula"></div>
+
+                  <div>Среднее квардатическое отклонение:</div>
+                  <div id="sigma" class="katex_formula"></div>
+
+                  <div>Среднее стандартное отклонение:</div>
+                  <div id="S" class="katex_formula"></div>
+               </div>
+
+               <div class="answer" style="display: none;"></div>
+
+               <button onclick="changeVisibility()" id="answer" class="btn btn-info answer"
+                  style="display: none;"></button>
+
+               <div class="row justify-content-center align-items-center" id="resultBtn">
+                  <button onclick="calculate_4()" type="button" class="btn btn-danger">Расчёт</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0"
+         style="height: 100%;">
+         <div class="container h-100">
+
+            <div class="row">
+               <div class="col d-flex flex-column">
+
+                  <div class="data-input mt-4 mb-4">
+                     <label for="data-input-label">Выборка (значения разделяются пробелами):</label>
+                     <input type="text" class="form-control" id="data-input-values" placeholder="">
+                     <form method="post" action="/upload" enctype="multipart/form-data">
+                        <label for="data-input-file-label" style="display: block;">Или выберите .txt файл:</label>
+                        <input type="file" class="form-control-file" id="data-input-file" name="file"
+                           accept="text/plain">
+                     </form>
+                     <label for="data-input-intervals">Количество интервалов:</label>
+                     <input type="text" class="form-control" id="data-input-intervals" min="1" value="5" placeholder="">
+                  </div>
+
+                  <div class="checkboxes mb-4">
+                     <h5 class="mb-2">Выберите необходимые пункты:</h5>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="interval-series-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Интервальные ряды частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="group-series-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Группированные ряды распредления частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="hystograms-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Гистограммы интервального ряда частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="polygons-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Полигон группированного ряда распределения частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="emp-function-check">
+                        <label class="form-check-label" for="flexCheckChecked">
+                           Эмпирическая функция распределения интервального ряда и группированного ряда
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="numerics-check">
+                        <label class="form-check-label" for="flexCheckChecked">
+                           Числовые характеристики
+                        </label>
+                     </div>
+                  </div>
+
+                  <button id="task2-process-data" class="btn btn-danger">Расчёт</button>
+               </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center">
+               <div id="numeric-charachetirstics">
+                  <h5>Числовые характеристики</h5>
+                  <p>Среднее значение (xв):</p>
+                  <p id="mean" class="katex"></p>
+                  <p>Дисперсия:</p>
+                  <p id="variance" class="katex"></p>
+                  <p>Среднее квадратическое отклонение:</p>
+                  <p id="meanSquareDeviation" class="katex"></p>
+                  <p>Стандартое отклонение:</p>
+                  <p id="stdDeviation" class="katex"></p>
+               </div>
+
+               <div id="frequencySeries">
+                  <h5>Интервальные ряды частот и относительных частот</h5>
+               </div>
+
+               <div id="groupedSeriesWrapper">
+                  <h5>Группированные ряды распредления частот и относительных частот</h5>
+               </div>
+
+               <div id="frequencyHistogramWrapper">
+                  <h5>Гистограмма интервального ряда частот</h5>
+                  <canvas id="frequencyHistogram"></canvas>
+               </div>
+
+               <div id="relativeFrequencyHistogramWrapper">
+                  <h5>Гистограмма интервального ряда относительных частот</h5>
+                  <canvas id="relativeFrequencyHistogram"></canvas>
+               </div>
+
+               <div id="groupedFrequencySeriesPolygonWrapper">
+                  <h5>Полигон группированного ряда распределения частот</h5>
+                  <canvas id="groupedFrequencySeriesPolygon"></canvas>
+               </div>
+
+               <div id="groupedRelativeFrequencySeriesPolygonWrapper">
+                  <h5>Полигон группированного ряда распределения относительных частот</h5>
+                  <canvas id="groupedRelativeFrequencySeriesPolygon"></canvas>
+               </div>
+
+               <div id="empiricalDistributionCanvasWrapper">
+                  <h5>Эмпирическая функция распределения интервального ряда</h5>
+                  <canvas id="empiricalDistributionCanvas"></canvas>
+               </div>
+
+               <div id="empiricalDistributionForGroupedCanvasWrapper">
+                  <h5>Эмпирическая функция распределения группового ряда</h5>
+                  <canvas id="empiricalDistributionForGroupedCanvas"></canvas>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.4/d3.min.js"
+      integrity="sha512-nfUlp2ZWPKWlnAH/OsMeAqRSYBxOdPYeBXwceyw6QqqZ7uTT/s5/eS1hMKphjVBouk0jf/JQ8ULVJRnEqSHkXA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+   <script src="{{ url_for('static', filename='js/starwars.js') }}"></script>
+
+</body>
