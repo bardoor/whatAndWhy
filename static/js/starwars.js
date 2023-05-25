@@ -287,11 +287,17 @@ const dataInput = document.getElementById('data-input-values');
 const fileInput = document.getElementById('data-input-file');
 const intervalsInput = document.getElementById('data-input-intervals');
 const processDataButton = document.getElementById('task2-process-data');
-const resultsContainer = document.getElementById('results');
-const frequencyHistogramCanvas = document.getElementById('frequencyHistogram');
-const relativeFrequencyHistogramCanvas = document.getElementById('relativeFrequencyHistogram');
-const groupedFrequencySeriesPolygonCanvas = document.getElementById('groupedFrequencySeriesPolygon');
-const groupedRelativeFrequencySeriesPolygonCanvas = document.getElementById('groupedRelativeFrequencySeriesPolygon');
+
+const frequencySeriesContainer = document.getElementById('frequencySeriesWrapper');
+const groupedSeriesContainer = document.getElementById('groupedSeriesWrapper');
+
+const frequencyHistogram = document.getElementById('frequencyHistogramWrapper');
+const relativeFrequencyHistogram = document.getElementById('relativeFrequencyHistogramWrapper');
+const groupedFrequencySeriesPolygon = document.getElementById('groupedFrequencySeriesPolygonWrapper');
+const groupedRelativeFrequencySeriesPolygon = document.getElementById('groupedRelativeFrequencySeriesPolygonWrapper');
+
+const empDistFunc = document.getElementById('empiricalDistributionWrapper');
+const empDistGroupedFunc = document.getElementById('empiricalDistributionForGroupedWrapper');
 
 fileInput.addEventListener('change', (event) => {
    const file = event.target.files[0];
@@ -302,39 +308,7 @@ fileInput.addEventListener('change', (event) => {
    reader.readAsText(file);
 });
 
-processDataButton.addEventListener('click', () => {
-   const data = dataInput.value.split(/\s+/).map(Number);
-   const intervals = parseInt(intervalsInput.value);
-
-   fetch('/hystogram', {
-      headers: {
-         'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({
-         'data': data,
-         'intervals': intervals
-      })
-   })
-      .then(function (response) {
-         if (response.ok) {
-            response.json()
-               .then(function (response) {
-                  console.log(response);
-               });
-         }
-         else {
-            throw Error('Something went wrong');
-         }
-      })
-      .catch(function (error) {
-         console.log(error);
-      });
-
-   // processData(data, intervals);
-});
-
-function processData(data, intervalsCount) {
+function makeIntervals(data, intervalsCount) {
    const min = Math.min(...data);
    const max = Math.max(...data);
    const range = max - min;
@@ -373,106 +347,70 @@ function processData(data, intervalsCount) {
       intervals[i].relativeFrequency = intervals[i].frequency / totalDataPoints;
    }
 
-   calculateSampleCharacteristics(data);
-   displayResults(min, max, intervals);
-   drawFrequencyHistogramCanvas(min, max, intervals);
-   drawRelativeFrequencyHistogramCanvas(min, max, intervals);
-   drawGroupedFrequencySeriesPolygon(min, max, intervals);
-   drawGroupedRelativeFrequencySeriesPolygon(min, max, intervals);
-
-   const canvasIdForEmp = 'empiricalDistributionCanvas';
-   const empiricalDistribution = calculateEmpiricalDistribution(intervals);
-   drawEmpiricalDistribution(min, intervalWidth, empiricalDistribution, canvasIdForEmp);
-
-   const canvasIdForEmpGro = 'empiricalDistributionForGroupedCanvas';
-   const empiricalDistributionForGroup = calculateEmpiricalDistributionForGrouped(intervals);
-   drawEmpiricalDistributionForGrouped(min, intervalWidth, empiricalDistributionForGroup, canvasIdForEmpGro);
+   return intervals;
 }
 
-var frequencyHistogramChart;
-function drawFrequencyHistogramCanvas(min, max, intervals) {
-   const labels = intervals.map((interval, i) => `${(min + i * interval.intervalWidth).toFixed(2)} - ${(min + (i + 1) * interval.intervalWidth).toFixed(2)}`);
-   const data = intervals.map(interval => interval.frequency);
+const intervalSeriesCheck = document.getElementById('interval-series-check');
+const groupSeriesCheck = document.getElementById('group-series-check');
+const hystogramsCheck = document.getElementById('hystograms-check');
+const polygonsCheck = document.getElementById('polygons-check');
+const empFunctionCheck = document.getElementById('emp-function-check');
+const numericsCheck = document.getElementById('numerics-check');
 
-   const histogramData = {
-      labels: labels,
-      datasets: [
-         {
-            label: 'Гистограмма интервального ряда частот',
-            data: data,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-         }
-      ]
-   };
-
-   const histogramConfig = {
-      type: 'bar',
-      data: histogramData,
-      options: {
-         scales: {
-            y: {
-               beginAtZero: true
-            },
-            x: {
-               beginAtZero: true
-            }
-         }
-      }
-   };
-
-   if (!frequencyHistogramChart) {
-      frequencyHistogramChart = new Chart(frequencyHistogramCanvas, histogramConfig);
+function toggle(element) {
+   if (element.style.display === 'none') {
+       element.style.display = 'block';
    } else {
-      frequencyHistogramChart.destroy();
-      frequencyHistogramChart = new Chart(frequencyHistogramCanvas, histogramConfig);
+       element.style.display = 'none';
    }
 }
 
-var relativeFrequencyHistogramChart;
-function drawRelativeFrequencyHistogramCanvas(min, max, intervals) {
-   const labels = intervals.map((interval, i) => `${(min + i * interval.intervalWidth).toFixed(2)} - ${(min + (i + 1) * interval.intervalWidth).toFixed(2)}`);
-   const data = intervals.map(interval => interval.relativeFrequency);
+intervalSeriesCheck.addEventListener('click', function () {
+   toggle(frequencySeriesContainer);
+});
 
-   const histogramData = {
-      labels: labels,
-      datasets: [
-         {
-            label: 'Гистограмма интервального ряда относительных частот',
-            data: data,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-         }
-      ]
-   };
+groupSeriesCheck.addEventListener('click', function () {
+   toggle(groupedSeriesContainer);
+});
 
-   const histogramConfig = {
-      type: 'bar',
-      data: histogramData,
-      options: {
-         scales: {
-            y: {
-               beginAtZero: true
-            },
-            x: {
-               beginAtZero: true
-            }
-         }
-      }
-   };
+hystogramsCheck.addEventListener('click', function () {
+   toggle(document.getElementById('hist'));
+}); 
 
-   if (!relativeFrequencyHistogramChart) {
-      relativeFrequencyHistogramChart = new Chart(relativeFrequencyHistogramCanvas, histogramConfig);
-   } else {
-      relativeFrequencyHistogramChart.destroy();
-      relativeFrequencyHistogramChart = new Chart(relativeFrequencyHistogramCanvas, histogramConfig);
-   }
-}
+polygonsCheck.addEventListener('click', function () {
+   toggle(document.getElementById('poly'));
+});
 
-function displayResults(min, max, intervals) {
-   let header1 = "<h2>Интегральный ряд распределения частот и относительных частот</h2>";
+empFunctionCheck.addEventListener('click', function () {
+   toggle(document.getElementById('task2_emp_func'));
+}); 
+
+numericsCheck.addEventListener('click', function () {
+   toggle(document.getElementById('numeric-charachetirstics'));
+}); 
+
+const checkings = [intervalSeriesCheck, groupSeriesCheck, hystogramsCheck,
+   polygonsCheck, empFunctionCheck, numericsCheck];
+
+const containersForChecking = [document.getElementById('frequencySeriesWrapper'),
+document.getElementById('groupedSeriesWrapper'),
+document.getElementById('hist'), document.getElementById('poly'),
+document.getElementById('task2_emp_func'),
+document.getElementById('numeric-charachetirstics')];
+
+document.getElementById('task2-process-data').addEventListener('click', async function () {
+   const series = dataInput.value.split(/\s+/).map(Number);
+   const intervalsCount = parseInt(intervalsInput.value);
+   const intervals = makeIntervals(series, intervalsCount);
+   const min = Math.min(...series);
+   const max = Math.max(...series);
+   const range = max - min;
+   const intervalWidth = range / intervalsCount;
+   const totalDataPoints = series.length;
+
+   // ***************************
+
+   let header1 = "<h5>Интервальный ряд распределения частот и относительных частот</h5>";
    let intervalsValue = "<tr>" + "<td>Интервалы</td>";
    let freqs = "<tr>" + "<td>ni</td>";
    let relFreqs = "<tr>" + "<td>wi</td>";
@@ -490,7 +428,7 @@ function displayResults(min, max, intervals) {
 
    let results = header1 + '<table>' + '<tbody class="table-responsive">' + intervalsValue + freqs + relFreqs + "</tbody>" + '</table>';
 
-   let header2 = "<h2>Групповой ряд распределения частот и относительных частот</h2>"
+   let header2 = "<h5>Групповой ряд распределения частот и относительных частот</h5>"
    let xes = "<tr>" + "<td>x*i</td>";
    for (let i = 0; i < intervals.length; i++) {
       xes += "<td>" + intervals[i].mean.toFixed(2) + "</td>";
@@ -499,209 +437,21 @@ function displayResults(min, max, intervals) {
 
    let group = header2 + '<table>' + '<tbody class="table-responsive">' + xes + freqs + relFreqs + "</tbody>" + '</table>';
 
-   resultsContainer.innerHTML = results + group;
-}
+   frequencySeriesContainer.innerHTML = results;
+   groupedSeriesContainer.innerHTML = group;
 
-var groupedFrequencySeriesPolygonChart;
-function drawGroupedFrequencySeriesPolygon(min, max, intervals) {
-   const labels = intervals.map(interval => interval.mean.toFixed(2));
-   const data = intervals.map(interval => interval.frequency);
+   // ***************************
+   document.getElementById('numeric-charachetirstics').innerHTML = '<h5>Числовые характеристики</h5> \
+   <p>Среднее значение (xв):</p> \
+   <p id="mean" class="katex"></p> \
+   <p>Дисперсия:</p> \
+   <p id="variance" class="katex"></p> \
+   <p>Среднее квадратическое отклонение:</p> \
+   <p id="meanSquareDeviation" class="katex"></p> \
+   <p>Стандартое отклонение:</p> \
+   <p id="stdDeviation" class="katex"></p>';
 
-   const polygonData = {
-      labels: labels,
-      datasets: [
-         {
-            label: 'Полигон группированного ряда распределения частот',
-            data: data,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            fill: false,
-            tension: 0,
-            pointRadius: 3
-         }
-      ]
-   };
-
-   const polygonConfig = {
-      type: 'line',
-      data: polygonData,
-      options: {
-         scales: {
-            y: {
-               beginAtZero: true
-            },
-            x: {
-               beginAtZero: true
-            }
-         }
-      }
-   };
-
-   if (!groupedFrequencySeriesPolygonChart) {
-      groupedFrequencySeriesPolygonChart = new Chart(groupedFrequencySeriesPolygonCanvas, polygonConfig);
-   } else {
-      groupedFrequencySeriesPolygonChart.destroy();
-      groupedFrequencySeriesPolygonChart = new Chart(groupedFrequencySeriesPolygonCanvas, polygonConfig);
-   }
-}
-
-var groupedRelativeFrequencySeriesPolygonChart;
-function drawGroupedRelativeFrequencySeriesPolygon(min, max, intervals) {
-   const labels = intervals.map(interval => interval.mean.toFixed(2));
-   const data = intervals.map(interval => interval.relativeFrequency);
-
-   const polygonData = {
-      labels: labels,
-      datasets: [
-         {
-            label: 'Полигон группированного ряда распределения относительных частот',
-            data: data,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            fill: false,
-            tension: 0,
-            pointRadius: 3
-         }
-      ]
-   };
-
-   const polygonConfig = {
-      type: 'line',
-      data: polygonData,
-      options: {
-         scales: {
-            y: {
-               beginAtZero: true
-            },
-            x: {
-               beginAtZero: true
-            }
-         }
-      }
-   };
-
-   if (!groupedRelativeFrequencySeriesPolygonChart) {
-      groupedRelativeFrequencySeriesPolygonChart = new Chart(groupedRelativeFrequencySeriesPolygonCanvas, polygonConfig);
-   } else {
-      groupedRelativeFrequencySeriesPolygonChart.destroy();
-      groupedRelativeFrequencySeriesPolygonChart = new Chart(groupedRelativeFrequencySeriesPolygonCanvas, polygonConfig);
-   }
-}
-
-function calculateEmpiricalDistribution(intervals) {
-   const empiricalDistribution = [];
-   let cumulativeFrequency = 0;
-
-   empiricalDistribution.push({
-      x: 0,
-      y: 0
-   });
-
-   empiricalDistribution.push({
-      x: intervals[0].min,
-      y: cumulativeFrequency
-   });
-
-   for (const interval of intervals) {
-      cumulativeFrequency += interval.relativeFrequency;
-      empiricalDistribution.push({
-         x: interval.max.toFixed(2),
-         y: cumulativeFrequency.toFixed(2)
-      });
-   }
-
-   empiricalDistribution.push({
-      x: (empiricalDistribution[empiricalDistribution.length - 1].x * 1.1),
-      y: empiricalDistribution[empiricalDistribution.length - 1].y
-   });
-
-   return empiricalDistribution;
-}
-
-function drawEmpiricalDistribution(min, intervalWidth, empiricalDistribution, canvasId) {
-   const labels = empiricalDistribution.map(item => item.x);
-   const data = empiricalDistribution.map(item => item.y);
-   const ctx = document.getElementById(canvasId).getContext('2d');
-
-   const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-         labels: labels,
-         datasets: [{
-            label: 'Эмпирическая функция распределения для интервального ряда',
-            data: data,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            fill: false,
-            pointRadius: 3
-         }]
-      }
-   })
-}
-
-function calculateEmpiricalDistributionForGrouped(intervals) {
-   const empiricalDistribution = [];
-   let cumulativeFrequency = 0;
-
-   for (const interval of intervals) {
-      cumulativeFrequency += interval.relativeFrequency;
-      empiricalDistribution.push({
-         x: interval.mean.toFixed(2),
-         y: cumulativeFrequency.toFixed(2)
-      });
-   }
-
-   empiricalDistribution.push({
-      x: (empiricalDistribution[empiricalDistribution.length - 1].x * 1.1),
-      y: empiricalDistribution[empiricalDistribution.length - 1].y
-   });
-
-   return empiricalDistribution;
-}
-
-function drawEmpiricalDistributionForGrouped(min, intervalWidth, empiricalDistributionForGroup, canvasId) {
-   const labels = empiricalDistributionForGroup.map(item => item.x);
-   const ctx = document.getElementById(canvasId).getContext('2d');
-   const datasets = [];
-
-   for (let i = 1; i < empiricalDistributionForGroup.length; i++) {
-      const x1 = empiricalDistributionForGroup[i - 1].x;
-      const x2 = empiricalDistributionForGroup[i].x;
-      const y1 = empiricalDistributionForGroup[i - 1].y;
-
-      datasets.push({
-         label: '',
-         data: [
-            { x: x1, y: y1 },
-            { x: x2, y: y1 }],
-         borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 99, 132)'
-         ],
-         backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgb(255, 99, 132)'
-         ],
-         borderWidth: 1,
-         fill: false,
-         pointRadius: 3,
-      });
-   }
-
-   console.log(labels)
-   console.log(datasets)
-
-   const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-         labels: labels,
-         datasets: datasets
-      },
-   })
-}
-
-function calculateSampleCharacteristics(sample) {
+   const sample = series;
    const n = sample.length;
 
    // Среднее значение (xв)
@@ -720,4 +470,97 @@ function calculateSampleCharacteristics(sample) {
    const stdDeviation = Math.sqrt(sample.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / (n - 1)).toFixed(2);
    katex.render(`\\sqrt{\\frac{\\sum_{i=1}^{n}(x_i - x_в)^2}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^{${sample.length}}(x_i - ${mean})^2}{${sample.length - 1}}} = ${stdDeviation}`, document.getElementById('stdDeviation'));
 
-}
+   // ***************************
+
+   const histResponse = await fetch('/task2_hist', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         series: series,
+         intervals: intervalsCount
+      })
+   });
+   const histData = await histResponse.json();
+   const histSvgImage = histData.image;
+   const histHeader = '<h5>Гистограмма интервального ряда частот</h5>';
+   const hist = '<div>' + atob(histSvgImage) + '</div>';
+   frequencyHistogram.innerHTML = histHeader + hist;
+
+   const relHistResponse = await fetch('/task2_hist_rel', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         series: series,
+         intervals: intervalsCount
+      })
+   });
+   const relHistData = await relHistResponse.json();
+   const relHistSvgImage = relHistData.image;
+   const relHistHeader = '<h5>Гистограмма интервального ряда относительных частот</h5>';
+   const relHist = '<div>' + atob(relHistSvgImage) + '</div>';
+   relativeFrequencyHistogram.innerHTML = relHistHeader + relHist;
+
+   const polygonResponse = await fetch('/task2_polygon', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         intervals: intervals
+      })
+   });
+   const polygonData = await polygonResponse.json();
+   const polygonSvgImage = polygonData.image;
+   const polygonHistHeader = '<h5>Полигон группированного ряда распределения частот</h5>';
+   const polygon = '<div>' + atob(polygonSvgImage) + '</div>';
+   groupedFrequencySeriesPolygon.innerHTML = polygonHistHeader + polygon;
+
+   const relPolygonResponse = await fetch('/task2_polygon_rel', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         intervals: intervals
+      })
+   });
+   const relPolygonData = await relPolygonResponse.json();
+   const relPolygonSvgImage = relPolygonData.image;
+   const relPolygonHistHeader = '<h5>Полигон группированного ряда распределения относительных частот</h5>';
+   const relPolygon = '<div>' + atob(relPolygonSvgImage) + '</div>';
+   groupedRelativeFrequencySeriesPolygon.innerHTML = relPolygonHistHeader + relPolygon;
+
+   const empDistResponse = await fetch('/task2_emp_dist', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         intervals: intervals
+      })
+   });
+   const empDistData = await empDistResponse.json();
+   const empDistSvgImage = empDistData.image;
+   const empDistHeader = '<h5>Эмпирическая функция распределения интервального ряда</h5>';
+   const empDist = '<div>' + atob(empDistSvgImage) + '</div>';
+   empDistFunc.innerHTML = empDistHeader + empDist;
+
+   const empDistGroupedResponse = await fetch('/task2_emp_dist_grouped', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         intervals: intervals
+      })
+   });
+   const empDistGroupedData = await empDistGroupedResponse.json();
+   const empDistGroupedSvgImage = empDistGroupedData.image;
+   const empDistGroupedHeader = '<h5>Эмпирическая функция распределения группированного ряда</h5>' + empDistGroupedData.html;
+   const empDistGrouped = '<div>' + atob(empDistGroupedSvgImage) + '</div>';
+   empDistGroupedFunc.innerHTML = empDistGroupedHeader + empDistGrouped;
+});

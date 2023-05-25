@@ -1,31 +1,22 @@
-import io
-import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
-from flask import Flask, send_file, Response
+import numpy as np
 
-app = Flask(__name__)
+# Create some sample data
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
 
-@app.route("/")
-def plot_chart():
-    # Generate data
-    x = np.linspace(-10, 10, 100)
-    y = x**2
+# Create a plot
+fig, ax = plt.subplots()
 
-    # Create the plot
-    sns.set(style="darkgrid")
-    plt.figure(figsize=(10, 6))
-    sns.lineplot(x=x, y=y)
-    plt.xlabel("x")
-    plt.ylabel("y = x^2")
+# Plot the data
+ax.plot(x, y)
 
-    # Save the plot to a BytesIO object
-    img = io.BytesIO()
-    plt.savefig(img, format="png")
-    img.seek(0)
+# Define a custom function to format the coordinates
+def format_coord(x, y):
+    return f'x={x:.2f}, y={y:.2f}'
 
-    # Return the image as a response
-    return send_file(img, mimetype="image/png")
+# Set the custom function as the coordinate formatter
+ax.format_coord = format_coord
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Display the plot
+plt.show()

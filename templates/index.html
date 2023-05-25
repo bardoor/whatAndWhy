@@ -161,7 +161,7 @@
                      <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="group-series-check">
                         <label class="form-check-label" for="flexCheckDefault">
-                           Группированные ряды распредления частот и относительных частот
+                           Группированные ряды распределения частот и относительных частот
                         </label>
                      </div>
                      <div class="form-check">
@@ -192,57 +192,42 @@
 
                   <button id="task2-process-data" class="btn btn-danger">Расчёт</button>
                </div>
-            </div>
+            </div> 
 
             <div class="row justify-content-center align-items-center">
-               <div id="numeric-charachetirstics">
-                  <h5>Числовые характеристики</h5>
-                  <p>Среднее значение (xв):</p>
-                  <p id="mean" class="katex"></p>
-                  <p>Дисперсия:</p>
-                  <p id="variance" class="katex"></p>
-                  <p>Среднее квадратическое отклонение:</p>
-                  <p id="meanSquareDeviation" class="katex"></p>
-                  <p>Стандартое отклонение:</p>
-                  <p id="stdDeviation" class="katex"></p>
+
+               <div id="frequencySeriesWrapper" style="display: none;">
+               </div>
+   
+               <div id="groupedSeriesWrapper" style="display: none;">
                </div>
 
-               <div id="frequencySeries">
-                  <h5>Интервальные ряды частот и относительных частот</h5>
+
+               <div id="hist" style="display: none;">
+                  <div id="frequencyHistogramWrapper">
+                  </div>
+   
+                  <div id="relativeFrequencyHistogramWrapper">
+                  </div>
                </div>
 
-               <div id="groupedSeriesWrapper">
-                  <h5>Группированные ряды распредления частот и относительных частот</h5>
+               <div id="poly" style="display: none;">
+                  <div id="groupedFrequencySeriesPolygonWrapper">
+                  </div>
+   
+                  <div id="groupedRelativeFrequencySeriesPolygonWrapper">
+                  </div>
                </div>
 
-               <div id="frequencyHistogramWrapper">
-                  <h5>Гистограмма интервального ряда частот</h5>
-                  <canvas id="frequencyHistogram"></canvas>
+               <div id="task2_emp_func" style="display: none;">
+                  <div id="empiricalDistributionWrapper">
+                  </div>
+   
+                  <div id="empiricalDistributionForGroupedWrapper">
+                  </div>
                </div>
 
-               <div id="relativeFrequencyHistogramWrapper">
-                  <h5>Гистограмма интервального ряда относительных частот</h5>
-                  <canvas id="relativeFrequencyHistogram"></canvas>
-               </div>
-
-               <div id="groupedFrequencySeriesPolygonWrapper">
-                  <h5>Полигон группированного ряда распределения частот</h5>
-                  <canvas id="groupedFrequencySeriesPolygon"></canvas>
-               </div>
-
-               <div id="groupedRelativeFrequencySeriesPolygonWrapper">
-                  <h5>Полигон группированного ряда распределения относительных частот</h5>
-                  <canvas id="groupedRelativeFrequencySeriesPolygon"></canvas>
-               </div>
-
-               <div id="empiricalDistributionCanvasWrapper">
-                  <h5>Эмпирическая функция распределения интервального ряда</h5>
-                  <canvas id="empiricalDistributionCanvas"></canvas>
-               </div>
-
-               <div id="empiricalDistributionForGroupedCanvasWrapper">
-                  <h5>Эмпирическая функция распределения группового ряда</h5>
-                  <canvas id="empiricalDistributionForGroupedCanvas"></canvas>
+               <div id="numeric-charachetirstics" style="display: none;">
                </div>
             </div>
          </div>
