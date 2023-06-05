@@ -8,7 +8,7 @@
 
    <title>Расчёт подсчёт обсчёт</title>
 
-   <link href="css/bootstrap.min.css" rel="stylesheet" />
+   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css"
       integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
@@ -18,11 +18,7 @@
       integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t"
       crossorigin="anonymous"></script>
 
-   <link href="css/style.css" rel="stylesheet">
-
-
-
-
+   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -48,7 +44,7 @@
             <div class="row justify-content-center">
                <form class="col">
                   <div class="selection">
-                     <label for="selectionInputLabel">Выборка(значения разделяются пробелами):</label>
+                     <label for="selectionInputLabel">Выборка (значения разделяются пробелами):</label>
                      <input type="text" class="form-control" id="selectionInput" placeholder="">
                   </div>
                   <form method="post" action="/upload" enctype="multipart/form-data">
@@ -106,7 +102,8 @@
                <div id="emp-ser">
                   <div>Эмпирический ряд распределения:</div>
                   <div id="distribution"></div>
-                  <canvas id="graphCanvas" width="900" height="400"></canvas>
+                  <div id="task1_empDist"></div>
+                  <div> Разрыв оси:<img src="{{url_for('static',filename='img/fuck.png')}}"></div>
                </div>
 
                <div id="numerics">
@@ -138,47 +135,110 @@
       <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0"
          style="height: 100%;">
          <div class="container h-100">
-            <div class="row h-100 justify-content-center align-items-center">
-               <form class="col">
-                  <img src="img/5.bmp" class="img-fluid formula" style="width: 500px;">
-               </form>
-               <form class="col">
-                  <div class="elementsCount">
-                     <label for="elementsCountLabel">Количество элементов(k):</label>
-                     <input type="text" class="form-control" id="elementsCount" placeholder="500">
-                  </div>
-                  <div class="choseElementsCount">
-                     <label for="choseElementsCountLabel">Количество выбираемых элементов(n):</label>
-                     <input type="text" class="form-control" id="choseElementsCount" placeholder="300">
-                  </div>
-                  <div class="elementsInTypeCount">
-                     <label for="elementsInTypeCountLabel">Количество элементов i-того типа(k1 k2 ... ki ...):</label>
-                     <input type="text" class="form-control" id="elementsInTypeCount" placeholder="4 5 3 7 5 ...">
-                  </div>
-                  <div class="amongElementsCount">
-                     <label for="amongElementsCountLabel">Среди которых будет i-того типа(n1 n2 ... ni ...):</label>
-                     <input type="text" class="form-control" id="amongElementsCount" placeholder="1 4 2 5 4 ...">
-                  </div>
-               </form>
 
-               <div class="answer" style="display: none;"></div>
+            <div class="row">
+               <div class="col d-flex flex-column">
 
-               <button onclick="changeVisibility2()" id="answer2" class="btn btn-info answer"
-                  style="display: none;"></button>
+                  <div class="data-input mt-4 mb-4">
+                     <label for="data-input-label">Выборка (значения разделяются пробелами):</label>
+                     <input type="text" class="form-control" id="data-input-values" placeholder="">
+                     <form method="post" action="/upload" enctype="multipart/form-data">
+                        <label for="data-input-file-label" style="display: block;">Или выберите .txt файл:</label>
+                        <input type="file" class="form-control-file" id="data-input-file" name="file"
+                           accept="text/plain">
+                     </form>
+                     <label for="data-input-intervals">Количество интервалов:</label>
+                     <input type="text" class="form-control" id="data-input-intervals" min="1" value="5" placeholder="">
+                  </div>
 
-               <div class="row justify-content-center align-items-center" id="resultBtn2">
-                  <button onclick="calculate_5()" type="button" class="btn btn-danger">Обсчёт подсчёт расчёт
-                     пересчёт</button>
+                  <div class="checkboxes mb-4">
+                     <h5 class="mb-2">Выберите необходимые пункты:</h5>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="interval-series-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Интервальные ряды частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="group-series-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Группированные ряды распределения частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="hystograms-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Гистограммы интервального ряда частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="polygons-check">
+                        <label class="form-check-label" for="flexCheckDefault">
+                           Полигон группированного ряда распределения частот и относительных частот
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="emp-function-check">
+                        <label class="form-check-label" for="flexCheckChecked">
+                           Эмпирическая функция распределения интервального ряда и группированного ряда
+                        </label>
+                     </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="numerics-check">
+                        <label class="form-check-label" for="flexCheckChecked">
+                           Числовые характеристики
+                        </label>
+                     </div>
+                  </div>
+
+                  <button id="task2-process-data" class="btn btn-danger">Расчёт</button>
+               </div>
+            </div> 
+
+            <div class="row justify-content-center align-items-center">
+
+               <div id="frequencySeriesWrapper" style="display: none;">
+               </div>
+   
+               <div id="groupedSeriesWrapper" style="display: none;">
+               </div>
+
+
+               <div id="hist" style="display: none;">
+                  <div id="frequencyHistogramWrapper">
+                  </div>
+   
+                  <div id="relativeFrequencyHistogramWrapper">
+                  </div>
+               </div>
+
+               <div id="poly" style="display: none;">
+                  <div id="groupedFrequencySeriesPolygonWrapper">
+                  </div>
+   
+                  <div id="groupedRelativeFrequencySeriesPolygonWrapper">
+                  </div>
+               </div>
+
+               <div id="task2_emp_func" style="display: none;">
+                  <div id="empiricalDistributionWrapper">
+                  </div>
+   
+                  <div id="empiricalDistributionForGroupedWrapper">
+                  </div>
+               </div>
+
+               <div id="numeric-charachetirstics" style="display: none;">
                </div>
             </div>
          </div>
       </div>
    </div>
-   <script src="js/bootstrap.bundle.min.js"></script>
-   <script src="js/jquery.min.js"></script>
+   <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.4/d3.min.js"
       integrity="sha512-nfUlp2ZWPKWlnAH/OsMeAqRSYBxOdPYeBXwceyw6QqqZ7uTT/s5/eS1hMKphjVBouk0jf/JQ8ULVJRnEqSHkXA=="
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <script src="js/starwars.js"></script>
+   <script src="{{ url_for('static', filename='js/starwars.js') }}"></script>
 
 </body>
