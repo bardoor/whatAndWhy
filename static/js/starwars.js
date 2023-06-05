@@ -205,9 +205,7 @@ for (let i = 0; i < cheks.length; i++) {
    checkHandle(checksContainers[i], cheks[i]);
 }
 
-
-
-function calculate_4() {
+async function calculate_4() {
    // Пример использования
    let inputSelection = document.getElementById('selectionInput').value || document.getElementById('selectionInputFile').value;
 
@@ -249,8 +247,45 @@ function calculate_4() {
    console.log("intervals: " + distIntervals);
    console.log("Vals: " + distValues);
 
+   const intervals = [];
+   const xes = distIntervals.filter((value, index, array) => array.indexOf(value) === index);;
+   const relFreqs = distValues;
+   relFreqs.shift();
+   relFreqs.pop();
+   xes.shift();
+   xes.pop();
+   intervals.push({
+      mean: xes[0][0],
+      relativeFrequency: 0
+   });
+   for (let i = 0; i < relFreqs.length; i++) {
+      const x = xes[i];
+      intervals.push({
+         mean: x[1],
+         relativeFrequency: relFreqs[i]
+      });
+   }
+   console.log(intervals);
+
+   task1_empDistGroupedFunc = document.getElementById('task1_empDist');
+   const task1_empDistGroupedResponse = await fetch('/task1_emp_dist', {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+         intervals: intervals
+      })
+   });
+   const task1_empDistGroupedData = await task1_empDistGroupedResponse.json();
+   const task1_empDistGroupedSvgImage = task1_empDistGroupedData.image;
+   const task1_empDistGroupedHeader = '<h5>Эмпирическая функция распределения</h5>';
+   const task1_emoDistBody = ''; 
+   const task1_empDistGrouped = '<div>' + atob(task1_empDistGroupedSvgImage) + '</div>';
+   task1_empDistGroupedFunc.innerHTML = task1_empDistGroupedHeader + task1_empDistGrouped + task1_emoDistBody;
+
    // График
-   renderChart(distIntervals, distValues);
+   // renderChart(distIntervals, distValues);
 
    // Числовые хар-ки
    let x = 0;
@@ -359,9 +394,9 @@ const numericsCheck = document.getElementById('numerics-check');
 
 function toggle(element) {
    if (element.style.display === 'none') {
-       element.style.display = 'block';
+      element.style.display = 'block';
    } else {
-       element.style.display = 'none';
+      element.style.display = 'none';
    }
 }
 
@@ -375,7 +410,7 @@ groupSeriesCheck.addEventListener('click', function () {
 
 hystogramsCheck.addEventListener('click', function () {
    toggle(document.getElementById('hist'));
-}); 
+});
 
 polygonsCheck.addEventListener('click', function () {
    toggle(document.getElementById('poly'));
@@ -383,11 +418,11 @@ polygonsCheck.addEventListener('click', function () {
 
 empFunctionCheck.addEventListener('click', function () {
    toggle(document.getElementById('task2_emp_func'));
-}); 
+});
 
 numericsCheck.addEventListener('click', function () {
    toggle(document.getElementById('numeric-charachetirstics'));
-}); 
+});
 
 const checkings = [intervalSeriesCheck, groupSeriesCheck, hystogramsCheck,
    polygonsCheck, empFunctionCheck, numericsCheck];
