@@ -182,6 +182,20 @@ function renderChart(intervals, values) {
 
 }
 
+selectionInputFile.addEventListener('input', (event) => {
+   const file = event.target.files[0];
+   const reader = new FileReader();
+
+   reader.onload = (e) => {
+      const fileContent = e.target.result;
+      const floatArray = fileContent.split(/\s+/).map(parseFloat);
+      document.getElementById('selectionInput').setAttribute('value', floatArray.join(' '));
+      console.log(floatArray);
+    };
+
+    reader.readAsText(file);
+});
+
 function checkHandle(container, checkbox) {
    checkbox.addEventListener('change', function () {
       if (checkbox.checked) {
@@ -267,7 +281,7 @@ async function calculate_4() {
    }
    console.log(intervals);
 
-   task1_empDistGroupedFunc = document.getElementById('task1_empDist');
+   const task1_empDistGroupedFunc = document.getElementById('task1_empDist');
    const task1_empDistGroupedResponse = await fetch('/task1_emp_dist', {
       method: 'POST',
       headers: {
@@ -281,7 +295,7 @@ async function calculate_4() {
    const task1_empDistGroupedSvgImage = task1_empDistGroupedData.image;
    const task1_empDistGroupedHeader = '<h5>Эмпирическая функция распределения</h5>';
    const task1_emoDistBody = ''; 
-   const task1_empDistGrouped = '<div>' + atob(task1_empDistGroupedSvgImage) + '</div>';
+   const task1_empDistGrouped = '<div>' + atob(task1_empDistGroupedSvgImage) + '</div>' + task1_empDistGroupedData.html;
    task1_empDistGroupedFunc.innerHTML = task1_empDistGroupedHeader + task1_empDistGrouped + task1_emoDistBody;
 
    // График
@@ -334,13 +348,18 @@ const groupedRelativeFrequencySeriesPolygon = document.getElementById('groupedRe
 const empDistFunc = document.getElementById('empiricalDistributionWrapper');
 const empDistGroupedFunc = document.getElementById('empiricalDistributionForGroupedWrapper');
 
-fileInput.addEventListener('change', (event) => {
+fileInput.addEventListener('input', (event) => {
    const file = event.target.files[0];
    const reader = new FileReader();
+
    reader.onload = (e) => {
-      dataInput.value = e.target.result;
-   };
-   reader.readAsText(file);
+      const fileContent = e.target.result;
+      const floatArray = fileContent.split(/\s+/).map(parseFloat);
+      document.getElementById('data-input-values').setAttribute('value', floatArray.join(' '));
+      console.log(floatArray);
+    };
+
+    reader.readAsText(file);
 });
 
 function makeIntervals(data, intervalsCount) {

@@ -1,0 +1,6 @@
+
+[2023-06-06 03:55:47] Traceback (most recent call last):
+  File "lifespan_handler.pyx", line 116, in cefpython_py37.LifespanHandler_OnBeforeClose
+  File "utils.pyx", line 50, in cefpython_py37.Debug
+KeyboardInterrupt
+

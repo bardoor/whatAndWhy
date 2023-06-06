@@ -21,6 +21,9 @@ def task2_hist():
     x = data['series']
     k = data['intervals']
 
+    print('hist ', x)
+    print('hist k', k)
+
     rc = {"xtick.direction": "inout", "ytick.direction": "inout",
           "xtick.major.size": 5, "ytick.major.size": 5, }
     with plt.rc_context(rc):
@@ -327,8 +330,8 @@ def task1_emp_dist():
     emp_dist_func.append( f"F(x > {round(xes[-2], 2)}) = 1" )
     
     emp_dist_func_html = ''
-    for e in emp_dist_func:
-        emp_dist_func_html += f"<div>{e}</div>"
+    if max(xes) > 30:
+        emp_dist_func_html += '<div>Разрыв оси:<img src="./static/img/fuck.png"></div>'
 
     rc = {"xtick.direction": "inout", "ytick.direction": "inout",
           "xtick.major.size": 5, "ytick.major.size": 5, }
@@ -338,9 +341,10 @@ def task1_emp_dist():
         print(xes)
         print(x_ticks)
         ax.set(xticks=xes, xticklabels=x_ticks)
-        ax.scatter([xes[1] - 0.5], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
-        ax.scatter([xes[1] - 0.3], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
-        ax.scatter([xes[1] - 0.7], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
+        if max(xes) >= 30:
+            ax.scatter([xes[1] - 0.5], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
+            ax.scatter([xes[1] - 0.3], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
+            ax.scatter([xes[1] - 0.7], [0], marker="s", facecolors='g', edgecolors='g', zorder=2)
 
         for plot in plots:
             ax.plot((plot[0][0], plot[1][0]), (plot[0][1], plot[1][1]), color='b')
